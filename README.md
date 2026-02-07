@@ -40,7 +40,7 @@ You don't need to be a coding wizard. I built this to be easily customizable for
 
 ### 1. Clone & Install
 ```bash
-git clone https://github.com/yourusername/valentine-protocol.git
+git clone https://github.com/EuclidStellar/valentine-protocol.git
 cd valentine-protocol
 npm install
 ```
