@@ -91,8 +91,20 @@ const ProposeDay = () => {
             // Convert to Image
             const dataUrl = canvas.toDataURL('image/png');
             setCapturedImage(dataUrl);
+
+            // Store in localStorage
+            localStorage.setItem('proposalImage', dataUrl);
+            localStorage.setItem('proposalImageTimestamp', new Date().toISOString());
         }
     };
+
+    // Load existing image from localStorage on mount
+    useEffect(() => {
+        const savedImage = localStorage.getItem('proposalImage');
+        if (savedImage) {
+            setCapturedImage(savedImage);
+        }
+    }, []);
 
     return (
         <div className="flex flex-col items-center gap-8 w-full max-w-lg relative pb-24">

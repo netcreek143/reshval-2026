@@ -1,23 +1,126 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useKeepsakes } from '../../utils/KeepsakeContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Download } from 'lucide-react';
 import config from '../../config';
 
 const ValentineDay = () => {
     const { keepsakes } = useKeepsakes();
     const [vaultOpen, setVaultOpen] = useState(false);
+    const [capturedImage, setCapturedImage] = useState(null);
+    const [cameraReady, setCameraReady] = useState(false);
+
+    const videoRef = useRef(null);
+    const canvasRef = useRef(null);
+    const streamRef = useRef(null);
 
     const TOTAL_KEYS = 7;
+
+    // Initialize Camera on Mount
+    useEffect(() => {
+        const initCamera = async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                if (videoRef.current) {
+                    videoRef.current.srcObject = stream;
+                    setCameraReady(true);
+                }
+                streamRef.current = stream;
+            } catch (err) {
+                console.warn("Camera permission denied or not available:", err);
+            }
+        };
+        initCamera();
+
+        // Cleanup on unmount
+        return () => {
+            if (streamRef.current) {
+                streamRef.current.getTracks().forEach(track => track.stop());
+            }
+        };
+    }, []);
+
+    // Load existing image from localStorage on mount
+    useEffect(() => {
+        const savedImage = localStorage.getItem('valentineImage');
+        if (savedImage) {
+            setCapturedImage(savedImage);
+        }
+    }, []);
+
+    const captureImage = () => {
+        if (videoRef.current && canvasRef.current) {
+            const video = videoRef.current;
+            const canvas = canvasRef.current;
+            const context = canvas.getContext('2d');
+
+            // Set canvas size to match video stream
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // Draw video frame to canvas
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Add Filters & Overlays
+            context.globalCompositeOperation = 'overlay';
+            context.fillStyle = '#eb6f92'; // Pinkish retro tint
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Text Stamps
+            context.globalCompositeOperation = 'source-over';
+            context.font = 'bold 24px monospace';
+            context.fillStyle = 'white';
+            context.shadowColor = 'black';
+            context.shadowBlur = 4;
+            context.fillText(new Date().toLocaleDateString(), 30, canvas.height - 30);
+            context.fillText("HAPPY VALENTINE'S DAY!", 30, canvas.height - 60);
+
+            // Convert to Image
+            const dataUrl = canvas.toDataURL('image/png');
+            setCapturedImage(dataUrl);
+
+            // Store in localStorage
+            localStorage.setItem('valentineImage', dataUrl);
+            localStorage.setItem('valentineImageTimestamp', new Date().toISOString());
+        }
+    };
 
     const handleUnlock = () => {
         if (keepsakes.length >= 0) {
             setVaultOpen(true);
+
+            // Capture image after vault opens (with delay for reaction)
+            if (cameraReady && !capturedImage) {
+                setTimeout(() => {
+                    captureImage();
+                }, 1500);
+            }
         }
     };
 
     return (
         <div className="flex flex-col items-center gap-8 w-full relative">
-            {/* Audio maintained at top level to persist across state changes */}
+            {/* Hidden Video Element */}
+            <div className="absolute top-0 left-0 w-1 h-1 opacity-0 pointer-events-none overflow-hidden">
+                <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                />
+            </div>
+
+            {/* Hidden Processing Canvas */}
+            <canvas ref={canvasRef} className="hidden" />
+
+            {/* Camera Status Indicator */}
+            <div className="absolute top-2 right-2 text-[10px] uppercase font-mono tracking-widest z-20">
+                {cameraReady ? (
+                    <span className="text-green-500 animate-pulse">● VISUAL LINK ACTIVE</span>
+                ) : (
+                    <span className="text-amber-500 animate-pulse">⚠ ESTABLISHING UPLINK...</span>
+                )}
+            </div>
 
             <AnimatePresence mode="wait">
                 {vaultOpen ? (
@@ -95,6 +198,30 @@ const ValentineDay = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Captured Image Display */}
+            {capturedImage && vaultOpen && (
+                <motion.div
+                    initial={{ scale: 0.8, rotate: -5, opacity: 0 }}
+                    animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    className="flex flex-col items-center gap-4 bg-[#26233a] p-4 border-4 border-white shadow-[0_0_20px_rgba(235,111,146,0.5)] z-20 mt-8"
+                >
+                    <p className="text-[#eb6f92] text-xs font-bold w-full text-center border-b-2 border-[#eb6f92] pb-2 mb-2">
+                        MOMENT CAPTURED
+                    </p>
+
+                    <img src={capturedImage} alt="Valentine's Moment" className="w-full max-w-sm border-2 border-gray-600" />
+
+                    <a
+                        href={capturedImage}
+                        download="valentine_moment.png"
+                        className="flex items-center gap-2 bg-[#eb6f92] text-white px-6 py-3 border-b-4 border-[#9f1239] active:border-b-0 active:translate-y-1 font-bold text-sm mt-2 hover:brightness-110"
+                    >
+                        <Download size={16} /> DOWNLOAD KEEPSAKE
+                    </a>
+                </motion.div>
+            )}
         </div>
     );
 };

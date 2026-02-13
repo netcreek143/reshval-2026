@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Calendar, User } from 'lucide-react';
+import { Heart, Calendar, User, Download, Camera } from 'lucide-react';
 
 const AdminView = () => {
     const [message, setMessage] = useState('');
     const [timestamp, setTimestamp] = useState('');
     const [hasMessage, setHasMessage] = useState(false);
+    const [proposalImage, setProposalImage] = useState(null);
+    const [proposalTimestamp, setProposalTimestamp] = useState('');
+    const [valentineImage, setValentineImage] = useState(null);
+    const [valentineTimestamp, setValentineTimestamp] = useState('');
 
     useEffect(() => {
         const savedMessage = localStorage.getItem('userMessage');
@@ -19,6 +23,25 @@ const AdminView = () => {
         if (savedTimestamp) {
             const date = new Date(savedTimestamp);
             setTimestamp(date.toLocaleString());
+        }
+
+        // Load captured images
+        const savedProposalImage = localStorage.getItem('proposalImage');
+        const savedProposalTimestamp = localStorage.getItem('proposalImageTimestamp');
+        const savedValentineImage = localStorage.getItem('valentineImage');
+        const savedValentineTimestamp = localStorage.getItem('valentineImageTimestamp');
+
+        if (savedProposalImage) {
+            setProposalImage(savedProposalImage);
+        }
+        if (savedProposalTimestamp) {
+            setProposalTimestamp(new Date(savedProposalTimestamp).toLocaleString());
+        }
+        if (savedValentineImage) {
+            setValentineImage(savedValentineImage);
+        }
+        if (savedValentineTimestamp) {
+            setValentineTimestamp(new Date(savedValentineTimestamp).toLocaleString());
         }
     }, []);
 
@@ -85,6 +108,76 @@ const AdminView = () => {
                                 <div className="text-[10px] text-[#908caa]">WORDS</div>
                             </div>
                         </div>
+
+                        {/* Captured Images Section */}
+                        {(proposalImage || valentineImage) && (
+                            <div className="mt-8 border-t-2 border-[#26233a] pt-6">
+                                <div className="flex items-center gap-2 mb-4 text-[#eb6f92] text-sm">
+                                    <Camera size={16} />
+                                    <span>Captured Moments:</span>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* Proposal Image */}
+                                    {proposalImage ? (
+                                        <div className="bg-[#26233a] border-2 border-[#eb6f92] p-4 rounded-sm">
+                                            <div className="text-xs text-[#eb6f92] mb-2 font-bold">PROPOSAL MOMENT</div>
+                                            <img src={proposalImage} alt="Proposal" className="w-full border-2 border-gray-600 mb-3" />
+                                            {proposalTimestamp && (
+                                                <div className="text-[10px] text-[#908caa] mb-3 flex items-center gap-1">
+                                                    <Calendar size={10} />
+                                                    {proposalTimestamp}
+                                                </div>
+                                            )}
+                                            <a
+                                                href={proposalImage}
+                                                download="proposal_moment.png"
+                                                className="flex items-center justify-center gap-2 bg-[#eb6f92] text-white px-4 py-2 border-b-4 border-[#9f1239] active:border-b-0 active:translate-y-1 font-bold text-xs hover:brightness-110 w-full"
+                                            >
+                                                <Download size={14} /> DOWNLOAD
+                                            </a>
+                                        </div>
+                                    ) : (
+                                        <div className="bg-[#26233a] border-2 border-[#6e6a86] p-4 rounded-sm opacity-50">
+                                            <div className="text-xs text-[#6e6a86] mb-2 font-bold">PROPOSAL MOMENT</div>
+                                            <div className="aspect-video bg-[#191724] border-2 border-[#6e6a86] flex items-center justify-center mb-3">
+                                                <span className="text-4xl">📷</span>
+                                            </div>
+                                            <div className="text-[10px] text-[#6e6a86] text-center">Not captured yet</div>
+                                        </div>
+                                    )}
+
+                                    {/* Valentine Image */}
+                                    {valentineImage ? (
+                                        <div className="bg-[#26233a] border-2 border-[#eb6f92] p-4 rounded-sm">
+                                            <div className="text-xs text-[#eb6f92] mb-2 font-bold">VALENTINE'S MOMENT</div>
+                                            <img src={valentineImage} alt="Valentine's Day" className="w-full border-2 border-gray-600 mb-3" />
+                                            {valentineTimestamp && (
+                                                <div className="text-[10px] text-[#908caa] mb-3 flex items-center gap-1">
+                                                    <Calendar size={10} />
+                                                    {valentineTimestamp}
+                                                </div>
+                                            )}
+                                            <a
+                                                href={valentineImage}
+                                                download="valentine_moment.png"
+                                                className="flex items-center justify-center gap-2 bg-[#eb6f92] text-white px-4 py-2 border-b-4 border-[#9f1239] active:border-b-0 active:translate-y-1 font-bold text-xs hover:brightness-110 w-full"
+                                            >
+                                                <Download size={14} /> DOWNLOAD
+                                            </a>
+                                        </div>
+                                    ) : (
+                                        <div className="bg-[#26233a] border-2 border-[#6e6a86] p-4 rounded-sm opacity-50">
+                                            <div className="text-xs text-[#6e6a86] mb-2 font-bold">VALENTINE'S MOMENT</div>
+                                            <div className="aspect-video bg-[#191724] border-2 border-[#6e6a86] flex items-center justify-center mb-3">
+                                                <span className="text-4xl">📷</span>
+                                            </div>
+                                            <div className="text-[10px] text-[#6e6a86] text-center">Not captured yet</div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <div className="bg-[#191724] border-4 border-[#6e6a86] p-8 text-center shadow-[8px_8px_0_rgba(0,0,0,0.5)]">
