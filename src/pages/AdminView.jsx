@@ -64,12 +64,12 @@ const AdminView = () => {
                         </div>
 
                         {/* Message Content */}
-                        <div className="bg-[#26233a] border-2 border-[#eb6f92] p-6 rounded-sm">
-                            <div className="flex items-center gap-2 mb-4 text-[#eb6f92] text-sm">
+                        <div className="bg-[#26233a] border-2 border-[#eb6f92] p-4 md:p-6 rounded-sm">
+                            <div className="flex items-center gap-2 mb-4 text-[#eb6f92] text-xs md:text-sm">
                                 <Heart size={16} />
                                 <span>Her Message:</span>
                             </div>
-                            <p className="text-[#e0def4] leading-relaxed whitespace-pre-wrap">
+                            <p className="text-[#e0def4] text-xs md:text-sm leading-relaxed whitespace-pre-wrap break-words overflow-wrap-anywhere">
                                 {message}
                             </p>
                         </div>

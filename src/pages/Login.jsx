@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Lock, User, Heart } from 'lucide-react';
+import profileImage from '../assets/reshmisuriya.jpeg';
 
 const Login = ({ onLoginSuccess }) => {
     const [username, setUsername] = useState('');
@@ -38,6 +39,13 @@ const Login = ({ onLoginSuccess }) => {
             >
                 {/* Header */}
                 <div className="text-center mb-8">
+                    <div className="mb-6 flex justify-center">
+                        <img
+                            src={profileImage}
+                            alt="Profile"
+                            className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-[#eb6f92] shadow-[8px_8px_0_rgba(0,0,0,0.5)] object-cover"
+                        />
+                    </div>
                     <div className="text-6xl mb-4 animate-pulse">💝</div>
                     <h1 className="text-3xl text-[#eb6f92] mb-2 drop-shadow-[2px_2px_0_rgba(0,0,0,1)]">
                         ACCESS REQUIRED
@@ -103,7 +111,7 @@ const Login = ({ onLoginSuccess }) => {
                     >
                         <span className="flex items-center justify-center gap-2">
                             <Heart size={16} />
-                            ENTER THE CHRONICLES
+                            ENTER MY HEART
                         </span>
                     </button>
                 </form>
