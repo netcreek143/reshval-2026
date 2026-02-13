@@ -9,8 +9,8 @@ const MessageSubmission = ({ onSubmitSuccess }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (message.trim().length < 35) {
-            setError('MESSAGE TOO SHORT! Please write at least 35 characters.');
+        if (message.trim().length < 75) {
+            setError('MESSAGE TOO SHORT! Please write at least 75 characters.');
             setTimeout(() => setError(''), 3000);
             return;
         }
@@ -24,7 +24,7 @@ const MessageSubmission = ({ onSubmitSuccess }) => {
     };
 
     const charCount = message.trim().length;
-    const isValid = charCount >= 35;
+    const isValid = charCount >= 75;
 
     return (
         <div className="min-h-screen bg-[#0f172a] text-[#e0def4] font-pixel overflow-hidden relative crt selection:bg-[#eb6f92] selection:text-[#191724] flex items-center justify-center p-4">
@@ -75,7 +75,7 @@ const MessageSubmission = ({ onSubmitSuccess }) => {
                         {/* Character Counter */}
                         <div className="mt-2 flex justify-between items-center text-xs">
                             <span className={`${isValid ? 'text-green-400' : 'text-amber-400'}`}>
-                                {isValid ? '✓' : '⚠️'} {charCount} / 35 characters minimum
+                                {isValid ? '✓' : '⚠️'} {charCount} / 75 characters minimum
                             </span>
                             <span className="text-[#908caa]">
                                 {charCount} characters
