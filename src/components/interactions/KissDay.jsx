@@ -8,7 +8,7 @@ const KissDay = () => {
     const [score, setScore] = useState(0);
     const [hearts, setHearts] = useState([]);
     const [gameRunning, setGameRunning] = useState(false);
-    
+
     // Rhythm Game (Simplified Guitar Hero)
     // 4 Columns
     const LANES = [0, 1, 2, 3];
@@ -39,15 +39,15 @@ const KissDay = () => {
 
     useEffect(() => {
         if (score >= 20 && !hasKeepsake('kiss_key')) {
-             setGameRunning(false);
-             addKeepsake('kiss_key', 'Kiss Key', '🗝️');
+            setGameRunning(false);
+            addKeepsake('kiss_key', 'Kiss Key', '🗝️');
         }
     }, [score, hasKeepsake, addKeepsake]);
 
     const handleTap = (lane) => {
         // Check if any heart in this lane is in the "Hit Zone" (80-95%)
         const hit = hearts.find(h => h.lane === lane && h.y > 80 && h.y < 100);
-        
+
         if (hit) {
             setScore(s => s + 1);
             setHearts(prev => prev.filter(h => h.id !== hit.id)); // Remove hit
@@ -57,7 +57,6 @@ const KissDay = () => {
 
     return (
         <div className="relative w-full max-w-md h-[500px] bg-[#1a1b26] border-x-4 border-[#26233a] overflow-hidden flex flex-col">
-            <audio src={config.music.kiss} autoPlay loop hidden />
             <div className="text-center p-2 text-[#eb6f92] font-bold">
                 SCORE: {score}/20
             </div>
@@ -73,12 +72,12 @@ const KissDay = () => {
 
                 {/* Falling Hearts */}
                 {hearts.map(h => (
-                    <div 
+                    <div
                         key={h.id}
                         className="absolute text-2xl transition-none"
-                        style={{ 
+                        style={{
                             left: `${h.lane * 25 + 5}%`, // 25% width per lane
-                            top: `${h.y}%` 
+                            top: `${h.y}%`
                         }}
                     >
                         💋
@@ -89,7 +88,7 @@ const KissDay = () => {
             {/* Buttons */}
             <div className="h-24 flex items-center justify-around bg-[#26233a] pb-4">
                 {LANES.map(lane => (
-                    <button 
+                    <button
                         key={lane}
                         onMouseDown={() => handleTap(lane)}
                         onTouchStart={(e) => { e.preventDefault(); handleTap(lane); }}
@@ -103,7 +102,7 @@ const KissDay = () => {
             {/* Start Overlay */}
             {!gameRunning && score === 0 && (
                 <div className="absolute inset-0 z-10 bg-black/80 flex items-center justify-center">
-                    <button 
+                    <button
                         onClick={() => setGameRunning(true)}
                         className="px-8 py-4 bg-[#eb6f92] text-[#191724] font-bold border-4 border-white animate-pulse"
                     >
@@ -111,7 +110,7 @@ const KissDay = () => {
                     </button>
                 </div>
             )}
-            
+
             {/* Win Overlay */}
             {score >= 20 && (
                 <div className="absolute inset-0 z-50 bg-[#1a1b26]/90 flex items-center justify-center">

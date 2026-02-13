@@ -7,8 +7,6 @@ const RoseDay = () => {
     const { addKeepsake, hasKeepsake } = useKeepsakes();
     const [waterLevel, setWaterLevel] = useState(0); // 0 to 100
     const [isBlooming, setIsBlooming] = useState(false);
-    const [error, setError] = useState(null);
-    const audioRef = useRef(null);
     
     const STAGES = [
         { level: 0, text: "🥀", desc: "A sad, withered rose..." },
@@ -33,22 +31,6 @@ const RoseDay = () => {
 
     return (
         <div className="flex flex-col items-center gap-8 w-full max-w-md relative">
-             <audio 
-                ref={audioRef}
-                src={config.music.rose}
-                autoPlay
-                loop
-                onError={(e) => {
-                    console.error("Audio Error:", e);
-                    setError("File load failed. Check src/assets/audio.");
-                }}
-             />
-
-             {error && (
-                 <div className="absolute -top-20 bg-red-500 text-white text-[10px] p-2 rounded animate-bounce z-50">
-                     ⚠️ {error}
-                 </div>
-             )}
 
              {/* Retro Text Box */}
              <div className="w-full bg-[#26233a] border-4 border-white p-4 relative shadow-[4px_4px_0_rgba(0,0,0,0.5)]">
